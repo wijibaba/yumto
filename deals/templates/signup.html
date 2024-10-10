@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* General styles for the form */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Light background for better contrast */
+            margin: 0;
+            padding: 20px; /* Add some padding around the body */
+        }
+
+        .signup-container {
+            max-width: 400px; /* Set a maximum width for the form */
+            margin: auto; /* Center the form */
+            padding: 20px;
+            background-color: #fff; /* White background for the form */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        h2 {
+            text-align: center; /* Center the heading */
+            margin-bottom: 20px; /* Space below the heading */
+        }
+
+        .form-group {
+            margin-bottom: 15px; /* Space between form groups */
+        }
+
+        label {
+            display: block; /* Make labels block elements for full width */
+            margin-bottom: 5px; /* Space between label and input */
+            font-weight: bold; /* Bold labels */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="otp"] {
+            width: 100%; /* Full width for inputs */
+            padding: 10px; /* Padding inside inputs */
+            border: 1px solid #ccc; /* Border style */
+            border-radius: 4px; /* Rounded borders for inputs */
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .strength-indicator {
+            margin-top: 5px;
+            font-size: 14px;
+            height: 20px; /* Ensures the height is consistent */
+        }
+        .weak {
+            color: red;
+        }
+        .medium {
+            color: orange;
+        }
+        .strong {
+            color: green;
+        }
+
+        .btn-submit {
+            width: 100%; /* Full width for the submit button */
+            padding: 10px; /* Padding for button */
+            background-color: #007bff; /* Button color */
+            color: white; /* Text color for button */
+            border: none; /* Remove border */
+            border-radius: 4px; /* Rounded corners for button */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Font size for button */
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3; /* Darker color on hover */
+        }
+
+        .messages {
+            margin-top: 15px; /* Space above messages */
+            text-align: center; /* Center messages */
+        }
+
+        .message {
+            padding: 10px; /* Padding for messages */
+            border-radius: 4px; /* Rounded corners for messages */
+        }
+
+        /* Add specific styles for different message types */
+        .success {
+            background-color: #d4edda; /* Light green for success */
+            color: #155724; /* Dark green for text */
+        }
+
+        .error {
+            background-color: #f8d7da; /* Light red for error */
+            color: #721c24; /* Dark red for text */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-container">
+                <a href="{% url 'index' %}" class="navbar-brand">My Website</a>
+                <div class="navbar-links">
+                    <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="signup-section">
+            <div class="signup-container">
+                <h2>Sign Up</h2>
+                <form method="post" action="{% url 'signup' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" value="{{ username|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="{{ email|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" value="{{ password|default:'' }}" required oninput="checkPasswordStrength()">
+                            <span class="toggle-password" onclick="togglePasswordVisibility()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12c0 4.5 4.5 9 9 9s9-4.5 9-9-4.5-9-9-9-9 4.5-9 9zm9 3a3 3 0 100-6 3 3 0 000 6z" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="password-strength" class="strength-indicator"></div> <!-- Indicator for password strength -->
+                    {% if request.session.signup_info %}
+                    <div class="form-group">
+                        <label for="otp">OTP:</label>
+                        <input type="text" id="otp" name="otp" required>
+                        <p>OTP valid for 5 minutes</p>
+                    </div>
+                    {% endif %}
+                    <button type="submit" class="btn-submit">Register</button>
+                </form>
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="message {{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function checkPasswordStrength() {
+    const password = document.getElementById('password').value;
+    const strengthIndicator = document.getElementById('password-strength');
+
+    // If the password field is empty, reset the strength indicator
+    if (password.length === 0) {
+        strengthIndicator.textContent = ''; // Clear any message
+        strengthIndicator.className = 'strength-indicator'; // Reset class
+        return; // Exit the function
+    }
+
+    let strength = '';
+    let colorClass = '';
+
+    // Simple password strength rules
+    const lengthCriteria = password.length >= 8; // Minimum length
+    const upperCaseCriteria = /[A-Z]/.test(password); // At least one uppercase letter
+    const lowerCaseCriteria = /[a-z]/.test(password); // At least one lowercase letter
+    const numberCriteria = /[0-9]/.test(password); // At least one number
+    const specialCharacterCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password); // At least one special character
+
+    const criteriaCount = [lengthCriteria, upperCaseCriteria, lowerCaseCriteria, numberCriteria, specialCharacterCriteria].filter(Boolean).length;
+
+    // Determine strength
+    if (criteriaCount < 3) {
+        strength = 'Weak';
+        colorClass = 'weak';
+    } else if (criteriaCount === 3) {
+        strength = 'Medium';
+        colorClass = 'medium';
+    } else {
+        strength = 'Strong';
+        colorClass = 'strong';
+    }
+
+    // Display strength
+    strengthIndicator.textContent = `Strength: ${strength}`;
+    strengthIndicator.className = `strength-indicator ${colorClass}`;
+}
+
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-password svg');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.setAttribute('fill', 'black'); // Change color to indicate visibility
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.removeAttribute('fill', 'black'); // Reset color
+            }
+        }
+    </script>
+</body>
+</html>

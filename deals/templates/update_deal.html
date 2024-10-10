@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Deal</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Update Deal</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="image">Image URL:</label>
+            <input type="text" id="image" name="image" value="{{ deal.image }}" required>
+
+            <label for="deal_type">Deal Type:</label>
+            <input type="text" id="deal_type" name="deal_type" value="{{ deal.deal_type }}" required>
+
+            <label for="id">Deal Name:</label>
+            <input type="text" id="id" name="id" value="{{ deal.id }}" required>
+
+            <label for="price_range">Price Range:</label>
+            <input type="text" id="price_range" name="price_range" value="{{ deal.price_range }}" required>
+
+            <button type="submit">Update Deal</button>
+        </form>
+        <div class="footer">
+            <p>&copy; 2024 Best_Deals</p>
+        </div>
+    </div>
+
+</body>
+</html>

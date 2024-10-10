@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JazzCash Payment</title>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #d30606; /* JazzCash red */
+        }
+
+        .product-info {
+            margin-bottom: 20px;
+        }
+
+        .product-info h1 {
+            font-size: 20px;
+            color: #444;
+        }
+
+        /* JazzCash button */
+        .jazzcash-button {
+            background-color: rgb(213, 6, 6);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .jazzcash-button:hover {
+            background-color: rgb(185, 5, 5);
+        }
+
+        form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JazzCash Payment</h1>
+        <div class="product-info">
+            <h1>Product Name: {{product_name}}</h1>
+            <h1>Price: {{product_price}}</h1>
+            <h1>Quantity: {{quantity}}</h1>
+        </div>
+
+        <form method="post" action="https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/">
+            {% for key,value in post_data.items %}
+                <input type="hidden" name="{{key}}" value="{{value}}">
+            {% endfor %}
+            <button type="submit" class="jazzcash-button">Pay with JazzCash</button>
+        </form>
+    </div>
+</body>
+</html>

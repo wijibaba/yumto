@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>{{ deal.id }}</title>
+    <style>
+        .navbar {
+            height: 200px;
+            padding: 15px 20px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Add overlay to lighten the background */
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            animation: backgroundSlide 15s infinite;
+            opacity: 0.6; /* Adjust this value to control lightness */
+        }
+
+        /* Background image sliding animation */
+        @keyframes backgroundSlide {
+            0% {
+                background-image: url('https://yumtomandi.com/wp-content/uploads/2024/04/website-banner-1-2.jpg');
+            }
+            33% {
+                background-image: url('https://yumtomandi.com/wp-content/uploads/2024/04/website-banner-3.jpg');
+            }
+            66% {
+                background-image: url('https://yumtomandi.com/wp-content/uploads/2024/04/website-banner-2.jpg');
+            }
+            100% {
+                background-image: url('https://yumtomandi.com/wp-content/uploads/2024/04/website-banner-1-2.jpg');
+            }
+        }
+
+        /* Zoom-in effect for the logo image */
+        .navbar img {
+            animation: zoomEffect 15s infinite;
+            transition: transform 0.3s ease;
+            height: 100px; /* Adjust height of the image */
+        }
+
+        @keyframes zoomEffect {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar-links {
+            display: flex;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .nav-link:hover {
+            background: #fff;
+            color: #333;
+        }
+        .deal-detail-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+
+        .deal-image {
+            flex: 1;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-right: 40px;
+        }
+
+        .deal-image img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .deal-info {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .deal-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .quantity-options {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .deal-price {
+            font-size: 1.5em;
+            color: #ff5722;
+            font-weight: bold;
+        }
+
+        select#quantity {
+            padding: 10px 20px;
+            width: 250px; /* Adjust the width */
+            height: 45px; /* Adjust the height */
+            font-size: 1.1em; /* Increase font size */
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        select#quantity:focus {
+            border-color: #007bff; /* Border color on focus */
+            outline: none;
+        }
+
+        .quantity-adjust {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .quantity-adjust button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+        }
+
+        .quantity-adjust button:hover {
+            background-color: #218838;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        #order-now {
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #order-now:hover {
+            background-color: #218838;
+        }
+
+        .selected-price {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        /* Footer Basic Styling */
+        .footer {
+            background-color: #222;
+            color: #ccc;
+        }
+
+        .social-icons a {
+            margin: 0 10px; /* Space between icons */
+            text-decoration: none; /* Remove underline */
+            color: white; /* Icon color */
+            font-size: 24px; /* Increase icon size */
+        }
+
+        .social-icons a:hover {
+            color: #007BFF; /* Change color on hover */
+        }
+
+        .footer-content {
+            display: flex; /* Use Flexbox */
+            justify-content: space-between; /* Space out sections */
+            padding: 20px; /* Padding for overall footer */
+        }
+
+        .footer-section {
+            flex: 1; /* Each section takes equal space */
+            margin: 0 15px; /* Space between sections */
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin: 10px 0;
+        }
+
+        .footer-section ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-section ul li a:hover {
+            color: #007BFF;
+        }
+
+        /* Footer Bottom Section */
+        .footer-bottom {
+            background-color: #222;
+            color: #ccc;
+            padding: 10px;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px; /* Add margin between sections */
+        }
+    </style>
+</head>
+<body>
+     <nav class="navbar">
+        <div class="navbar-container">
+            <img src="https://yumtomandi.com/johartown-lhr/wp-content/uploads/sites/11/2024/03/yumto-logo-png-1-1.png">
+            <div class="navbar-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'logout_view' %}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="deal-detail-container">
+        <div class="deal-image">
+            <img src="{{ deal.image }}" alt="{{ deal.deal_name }}">
+        </div>
+        <div class="deal-info">
+            <h1>{{ deal.id }}</h1>
+            <p class="deal-price">Price Range: {{ deal.price_range }}</p>
+            <div class="quantity-options">
+                <label for="quantity">Quantity:</label>
+                <select id="quantity" onchange="updatePrice()">
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="half">Half</option>
+                    <option value="full">Full</option>
+                </select>
+                <p class="selected-price" id="selected-price"></p>
+                <p class="total-price" id="total-price"></p>
+            </div>
+            <div class="quantity-adjust" style="display: none;" id="quantity-adjust">
+                <button onclick="changeQuantity(-1)">-</button>
+                <input type="number" class="quantity-input" id="quantity-input" value="1" min="1" readonly>
+                <button onclick="changeQuantity(1)">+</button>
+                <button id="delete-order" onclick="deleteOrder()">Delete</button>
+            </div>
+            <button id="order-now" onclick="orderNow()">Order Now</button>
+        </div>
+    </div>
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h2>About Us</h2>
+                <p>
+                    We are a company committed to providing the best deals and services. Follow us on social media and stay updated!
+                </p>
+            </div>
+
+            <div class="footer-section social">
+                <h2>Follow Us</h2>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.youtube.com" target="_blank">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section links">
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; 2024 YourWebsite | All rights reserved
+        </div>
+    </footer>
+
+    <script>
+    const dealPriceElement = document.getElementById('selected-price');
+    const totalPriceElement = document.getElementById('total-price');
+    const originalPrice = "{{ deal.price_range }}";
+    const quantityAdjust = document.getElementById('quantity-adjust');
+    const quantityInput = document.getElementById('quantity-input');
+    let selectedPrice = 0;
+
+    function updatePrice() {
+        const quantityOption = document.getElementById('quantity').value;
+
+        if (originalPrice.includes('–')) {
+            const prices = originalPrice.split('–').map(price => price.replace(/[^0-9]/g, '').trim());
+            const minPrice = parseFloat(prices[0]);
+            const maxPrice = parseFloat(prices[1]);
+
+            if (quantityOption === 'half') {
+                selectedPrice = minPrice;
+            } else if (quantityOption === 'full') {
+                selectedPrice = maxPrice;
+            }
+
+            dealPriceElement.textContent = `Selected Price: ₨${selectedPrice}`;
+            dealPriceElement.style.display = 'block'; // Ensure the price is visible
+            quantityAdjust.style.display = 'flex'; // Show quantity adjust section
+            updateTotalPrice(); // Update total price when quantity option is selected
+        } else {
+            dealPriceElement.textContent = "Invalid price range format";
+        }
+    }
+
+    function changeQuantity(amount) {
+        let currentQuantity = parseInt(quantityInput.value);
+        currentQuantity += amount;
+
+        if (currentQuantity < 1) {
+            currentQuantity = 1; // Prevent going below 1
+        }
+
+        quantityInput.value = currentQuantity;
+        updateTotalPrice(); // Update the total price when quantity changes
+    }
+
+    function updateTotalPrice() {
+        const quantity = parseInt(quantityInput.value);
+        const totalPrice = selectedPrice * quantity;
+
+        if (totalPriceElement) {
+            totalPriceElement.textContent = `Total: ₨${totalPrice.toFixed(2)}`;
+            totalPriceElement.style.display = 'block'; // Ensure the total price is visible
+        }
+    }
+    function orderNow() {
+    const quantityOption = document.getElementById('quantity').value;
+
+    // Check if an option has been selected
+    if (quantityOption === '') {
+        alert('Please select an option (Half or Full) before proceeding.');
+        return; // Prevent going to checkout if no option is selected
+    }
+
+    const quantity = document.getElementById('quantity-input').value;
+    const totalPrice = (selectedPrice * quantity).toFixed(2);
+    const productName = "{{ deal.id }}"; // Adjust according to your deal naming
+    const orderUrl = `/checkout/?name=${encodeURIComponent(productName)}&quantity=${quantity}&total=${totalPrice}`;
+
+    window.location.href = orderUrl; // Navigate to checkout URL with details
+}
+    function deleteOrder() {
+        // Reset quantity and prices
+        quantityInput.value = 1;
+        selectedPrice = 0;
+        dealPriceElement.textContent = "";
+        totalPriceElement.textContent = "";
+
+        // Hide quantity adjust section
+        quantityAdjust.style.display = 'none';
+
+        // Optionally, reset the select box to its default state
+        document.getElementById('quantity').value = "";
+        alert('Your order has been deleted.');
+    }
+
+</script>
+
+</body>
+</html>

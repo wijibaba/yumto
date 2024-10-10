@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify_OTP</title>
+    {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/confirm_password.css' %}">
+
+    <style>
+        /* Custom Styles */
+        body {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: #1a1a1a;
+            padding: 1rem;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .navbar-links a {
+            color: #fff;
+            margin-left: 1rem;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .navbar-links a:hover {
+            color: #ffd700;
+        }
+
+        .otp-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem;
+        }
+
+        .otp-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .otp-container h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            color: #000;
+        }
+
+        .btn-submit {
+            background-color: #ffd700;
+            border: none;
+            color: #1a1a1a;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #ffcc00;
+        }
+
+        .messages {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+
+        .message {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .message.error {
+            border-left: 5px solid #ff4d4d;
+        }
+
+        .message.success {
+            border-left: 5px solid #4caf50;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        window.onload = function () {
+            var countdownDuration = 300;
+            var otpGenerationTime = new Date("{{ request.session.signup_info.otp_generation_time }}");
+            var expiryTime = new Date(otpGenerationTime.getTime() + countdownDuration * 1000);
+
+            function updateTimer() {
+                var now = new Date().getTime();
+                var distance = expiryTime - now;
+
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("timer").innerHTML = "EXPIRED";
+                    document.getElementById("otp-form").style.display = "none";
+                    document.getElementById("expired-message").style.display = "block";
+                }
+            }
+
+            var x = setInterval(updateTimer, 1000);
+        };
+    </script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-container">
+                <a href="#" class="navbar-brand">My Website</a>
+                <div class="navbar-links">
+                    <a href="{% url 'index' %}" class="nav-link">Home</a>
+                    <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="otp-section">
+            <div class="otp-container">
+                <h2>Verify OTP</h2>
+                <div id="timer" class="timer"></div>
+                <form id="otp-form" method="post" action="{% url 'verify_otp' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="otp">OTP:</label>
+                        <input type="text" id="otp" name="otp" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Verify</button>
+                </form>
+                <div id="expired-message" style="display:none;">
+                    <p>OTP has expired. Please request a new OTP.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

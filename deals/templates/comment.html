@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment on {{ deal.id }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .comments-section {
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .comment {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comment p {
+            margin: 0;
+        }
+
+        .comment .username {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .comment .timestamp {
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comment on {{ deal.deal_type }}</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="comment" rows="5" placeholder="Enter your comment here..." required></textarea>
+            <button type="submit" class="btn btn-primary">Submit Comment</button>
+        </form>
+
+        <div class="comments-section">
+            <h2>Comments:</h2>
+                <div class="comment">
+                    <p class="username">{{ comment.user.username }}:</p>
+                    <p>{{ comment.content }}</p>
+                    <p class="timestamp">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
+                </div>
+        </div>
+    </div>
+</body>
+</html>
